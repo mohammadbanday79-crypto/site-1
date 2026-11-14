@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Canada Applications Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3f6;--panel:#f8fbfc;--ink:#12202b;--mute:#5d6f7c;--line:#c9d5dd;--maple:#c8102e;--ice:#1f5f7a;--ok:#1e7a4d;
+color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a22;--panel:#15232d;--ink:#e6eef2;--mute:#8da0ad;--line:#2a3a46;--maple:#ff6b6f;--ice:#6cc1e0;--ok:#5fd09a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a22;--panel:#15232d;--ink:#e6eef2;--mute:#8da0ad;--line:#2a3a46;--maple:#ff6b6f;--ice:#6cc1e0;--ok:#5fd09a;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 "Instrument Sans",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:28px 18px 80px}
+h1,h2,.big{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--mute);font-size:14px}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ice);outline-offset:2px}
+.ghost{background:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--mute)}
+.hero{padding:34px 0 26px;border-bottom:2px solid var(--ink)}
+.hero .big{font-size:clamp(40px,10vw,84px);line-height:.95;font-weight:800;letter-spacing:-.03em;margin:0}
+.hero .big span{color:var(--maple)}
+.hero p{margin:12px 0 0;color:var(--mute);max-width:52ch}
+h2{font-size:22px;margin:38px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--mute);font-size:14px;margin:0 0 10px}
+.row{border-bottom:1px solid var(--line)}
+.head{display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:16px 2px}
+.head .nm{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:20px}
+.head .pg{color:var(--mute);font-size:14px}
+.days{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:30px;text-align:right;line-height:1}
+.days small{display:block;font:500 12px "Instrument Sans",sans-serif;color:var(--mute);margin-top:3px}
+.days.soon{color:var(--maple)}
+.bar{grid-column:1/-1;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ice);transition:width .25s}
+.bar i.full{background:var(--ok)}
+.body{display:none;padding:4px 2px 22px}
+.row.open .body{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+input[type=text],input[type=date],input[type=url],select,textarea{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);width:100%}
+textarea{min-height:70px;resize:vertical}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 18px;margin:6px 0 14px}
+.checks label{display:flex;gap:10px;align-items:center;padding:5px 0;cursor:pointer}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--ice);flex:none}
+.acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:9px 16px;font-weight:600}
+.btn.line{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn.del{background:none;color:var(--maple);border:0;padding:9px 4px}
+a{color:var(--ice)}
+.sch{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 2px;border-bottom:1px solid var(--line)}
+.sch.done .t{text-decoration:line-through;color:var(--mute)}
+.sch .t{font-weight:500}.sch .d{font-size:13px;color:var(--mute)}
+.add{display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:8px;margin-top:14px}
+.empty{color:var(--mute);padding:14px 2px}
+@media (max-width:600px){.add{grid-template-columns:1fr}.head .nm{font-size:18px}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.u{display:grid;grid-template-columns:200px 1fr;gap:6px 16px;padding:14px 2px;border-bottom:1px solid var(--line);align-items:start}
+.u b{font-family:"Bricolage Grotesque",sans-serif;font-size:18px}.u small{display:block;color:var(--mute)}
+.pl{display:flex;flex-wrap:wrap;gap:8px}
+.pb{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:14px}
+.pb:disabled{opacity:.55;cursor:default}
+.src{display:flex;flex-wrap:wrap;gap:8px 18px;margin:8px 0 4px}
+.sd{padding:12px 2px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:4px 14px;align-items:center}
+.sd .n{font-weight:600}.sd .m{font-size:14px;color:var(--mute)}
+@media (max-width:600px){.u{grid-template-columns:1fr}.sd{grid-template-columns:1fr}}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px 24px;margin:6px 0 16px}
+.info h4{margin:0 0 4px;font-family:"Bricolage Grotesque",sans-serif;font-size:15px}
+.info ul{margin:0;padding-left:18px;font-size:14px}.info li{margin-bottom:3px}
+.un{font-size:11px;color:var(--maple);border:1px solid var(--maple);border-radius:999px;padding:0 6px;white-space:nowrap}
+.dim .nm,.dim .pg{opacity:.5}
+.tag{font-size:12px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><span id="stat"></span><button class="ghost" id="theme" type="button">Switch theme</button></div>
+  <section class="hero">
+    <h1 class="big" id="hero"></h1>
+    <p id="heroSub"></p>
+  </section>
+
+  <h2>Universities</h2>
+  <p class="sub">All 8 are listed. Filter by degree type, then pick a program inside each university. Dates and rules were checked on 14 Nov 2026 for fall 2027 entry. Items without a tag come from the university's own site. Items tagged <span class="un">unconfirmed</span> came from a third-party site, so verify them first.</p>
+  <div class="chips" id="chips"></div>
+  <div id="unis"></div>
+
+  <h2>Scholarships</h2>
+  <p class="sub">Search sites first, then add anything promising to your list.</p>
+  <div class="src" id="src"></div>
+  <div id="sdb"></div>
+  <h3 style="font-family:'Bricolage Grotesque',sans-serif;margin:26px 0 4px">My scholarship list</h3>
+  <div id="schol"></div>
+  <form class="add" id="schForm" onsubmit="return false">
+    <input type="text" id="sn" placeholder="Other scholarship name" aria-label="Scholarship name">
+    <input type="date" id="sd" aria-label="Scholarship deadline">
+    <input type="url" id="su" placeholder="Link (https://…)" aria-label="Scholarship link">
+    <button class="btn" id="sa" type="button">Add to list</button>
+  </form>
+</main>
+
+<script>
+const KEY="canada-tracker-v3";
+const ITEMS=["Transcripts and predicted grades","IAL results (or predictions) sent","SAT score sent, if the program asks","English proof, if required","Personal statement or supplementary form","Reference letters","Application fee paid","Application submitted"];
+const STATUS=["Researching","Preparing","Applied","Offer","Not going"];
+const CATS={aero:"Aerospace and space",mech:"Mechanical",elec:"Electrical and computer",cs:"Computer science and AI",phys:"Engineering physics and science"};
+const O=1,U=0; // O = official source, U = unconfirmed third-party
+const UNIS=[
+{id:"carleton",name:"Carleton University",city:"Ottawa, ON",url:"https://carleton.ca",apply:"https://admissions.carleton.ca/apply-now-international-students/",dl:["2027-04-01",O],
+ p:[["Aerospace Engineering","aero"],["Mechanical Engineering","mech"],["Electrical Engineering","elec"],["Computer Systems Engineering","elec"],["Software Engineering","elec"],["Computer Science","cs"]],
+ how:[["Direct application through Carleton's international admissions page",O],["Carleton's site has a tool: pick your program and A levels to see exact requirements, prerequisites and steps. Use it for the grade targets.",O]],
+ dates:[["2027-04-01","Main deadline, international applicants, fall 2027",O],["2027-03-01","Prestige Scholarship deadline",O],["2026-10-15","Winter 2027 deadline for international applicants (too soon for you)",O]],
+ reqs:[["I did not find the A-level grade requirements in public text. Use Carleton's requirements tool above and paste the result into your notes.",O],["Websites other than Carleton's list conflicting Carleton dates. Trust only the official page.",O]],
+ money:[["President's Welcome Award for International Students: automatic, about $2,000 to $5,000 CAD depending on grades",O],["Entrance scholarships page lists an award for Aerospace and Mechanical Engineering students. Check its eligibility and deadline.",O]]},
+{id:"uoft",name:"University of Toronto",city:"Toronto, ON",url:"https://future.utoronto.ca",apply:"https://future.utoronto.ca/apply/important-application-dates",dl:["2027-01-15",O],
+ p:[["Engineering Science (Aerospace major)","aero"],["Engineering Science","phys"],["Mechanical Engineering","mech"],["Electrical Engineering","elec"],["Computer Engineering","elec"],["Computer Science","cs","2027-02-01"]],
+ how:[["Apply through OUAC (the 105 form for applicants outside Ontario schools)",O],["Engineering also needs the Engineering Supplemental Application (ESA), due the same day as the application",O],["Where you rank U of T Engineering on your OUAC list matters: ranking it below 3rd choice hurts you",O]],
+ dates:[["2026-11-07","Apply by this date to be in the earliest decision rounds",O],["2027-01-15","Engineering application and ESA deadline",O],["2027-02-01","Computer Science application and supplemental deadline",O],["2027-03-31","Residence application",O]],
+ reqs:[["At least 3 A-level subjects including A-level Maths and A-level Physics",O],["Chemistry: IGCSE/O-level is required, and AS or A-level is strongly recommended",O],["English (GCSE level) is required",O],["No fixed grade cut-off is published. Recommended range for Arts and Science is predicted As and A*s; Engineering is at least as competitive.",U]],
+ money:[["Engineering International Scholar Award: fill in the Financial Information section of the Engineering portal to be considered",O],["Lester B. Pearson International Scholarship exists, with nomination by your school. Check if private candidates can be nominated.",U],["Engineering supplemental fee of about $69 CAD",U]]},
+{id:"waterloo",name:"University of Waterloo",city:"Waterloo, ON",url:"https://uwaterloo.ca/future-students",apply:"https://uwaterloo.ca/find-out-more/admissions/applying-waterloo/deadlines",dl:["2027-01-15",O],
+ p:[["Mechanical Engineering","mech"],["Mechatronics Engineering","mech"],["Electrical Engineering","elec"],["Computer Engineering","elec"],["Software Engineering","elec"],["Computer Science","cs","2027-02-01"]],
+ how:[["Apply through OUAC (105). You can pick up to 3 programs, and only 1 can be Engineering.",O],["Every Engineering applicant must complete the Admission Information Form (AIF) and an online video interview. Software Engineering adds its own interview.",O],["English test results can be sent after you apply",O]],
+ dates:[["2027-01-15","Engineering application deadline",O],["2027-02-01","Engineering AIF, interview and documents deadline",O],["2027-02-01","Computer Science and Math application deadline",O],["2027-02-15","Documents deadline for non-Engineering programs",O]],
+ reqs:[["Mechanical and Computer Engineering: A-level Maths and A-level Physics, minimum A in each, plus one more A level at B or higher",O],["Chemistry: GCSE level at B minimum is required, and A level is recommended",O],["GCSE English at B (grade 5) minimum; at least 5 subjects with 3 at A level",O],["No fixed average: the committee weighs grades, the AIF and the interview",O]],
+ money:[["International entrance scholarship of about $10,000 CAD, automatic with no separate application",U],["President's Scholarship of Distinction exists. Check the current cut-off and eligibility.",U]]},
+{id:"alberta",name:"University of Alberta",city:"Edmonton, AB",url:"https://www.ualberta.ca/en/admissions",apply:"https://www.ualberta.ca/en/admissions/apply/index.html",dl:["2027-03-01",O],
+ p:[["Mechanical Engineering","mech"],["Electrical Engineering","elec"],["Computer Engineering","elec"],["Engineering Physics","phys"],["Computer Science","cs"]],
+ how:[["Apply directly to the University of Alberta; the fall 2027 application opened 1 Oct 2026",O],["Submit your final Grade 12 / exam results update by 19 Feb 2027 if it applies to your curriculum",O]],
+ dates:[["2027-01-10","Awards application deadline (application-based scholarships)",O],["2027-03-01","Fall 2027 admission application deadline",O]],
+ reqs:[["I did not find the A-level subject and grade requirements in public text. Check Alberta's international admission requirements by country.",O]],
+ money:[["Admission-based awards are automatic from your admission average",O],["Competitive awards need a separate awards application by 10 Jan 2027",O]]},
+{id:"tmu",name:"Toronto Metropolitan University",city:"Toronto, ON",url:"https://www.torontomu.ca/international/admissions/",apply:"https://www.torontomu.ca/international/admissions/how-to-apply/",dl:["2027-02-01",O],
+ p:[["Aerospace Engineering","aero"],["Mechanical Engineering","mech"],["Electrical Engineering","elec"],["Computer Engineering","elec"],["Computer Science","cs"]],
+ how:[["Apply with the TMU International Application, fee $90 CAD (or through OUAC)",O],["February 1 is a guaranteed consideration date, not a hard stop, but programs can close earlier when full. Apply early.",O]],
+ dates:[["2027-02-01","Guaranteed consideration date",O],["2027-02-16","Entrance scholarships deadline (President's, International Student Leadership Award)",O],["2027-04-01","English test score deadline",O],["2027-06-03","Residence application for a guaranteed first-year spot",O]],
+ reqs:[["All Engineering programs need A-level Maths and A-level Physics",O],["I did not find a published minimum A-level grade. Check the British-patterned section of TMU's country page.",O]],
+ money:[["Entrance scholarships need the Feb 16, 2027 application",O]]},
+{id:"york",name:"York University",city:"Toronto, ON",url:"https://futurestudents.yorku.ca",apply:"https://lassonde.yorku.ca/academics/international-students",dl:["2027-03-24",U],
+ p:[["Space Engineering","aero"],["Mechanical Engineering","mech"],["Electrical Engineering","elec"],["Computer Engineering","elec"],["Computer Science","cs"]],
+ how:[["Apply through OUAC or York's own application",O],["You apply to Lassonde Engineering as a whole and then rank up to 3 fields, such as Space or Mechanical",O]],
+ dates:[["2027-03-24","Fall 2027 guaranteed consideration date for international applicants. Confirm it on York's site.",U]],
+ reqs:[["IELTS Academic is required. IELTS General is not accepted.",O],["I did not find the A-level subject and grade requirements in public text. Check Lassonde's admission requirements by country.",O]],
+ money:[["I found no clear international entrance award details. Check York's awards page.",O]]},
+{id:"mcmaster",name:"McMaster University",city:"Hamilton, ON",url:"https://future.mcmaster.ca",apply:"https://www.eng.mcmaster.ca/applying-to-mac-eng-2027-and-beyond/",dl:["2027-01-15",O],
+ p:[["Mechanical Engineering","mech"],["Electrical Engineering","elec"],["Computer Engineering","elec"],["Software Engineering","elec"],["Engineering Physics","phys"],["Computer Science","cs"]],
+ how:[["Apply through OUAC",O],["Engineering also needs a mandatory supplementary application",O],["For fall 2027 you can rank a discipline when you apply, or choose after first year",O]],
+ dates:[["2027-01-15","OUAC application deadline",O],["2027-01-28","Engineering supplementary application, 11:59 pm ET",O],["2026-11-15","International entrance awards application opens",O],["2027-02-19","International entrance awards application deadline",O]],
+ reqs:[["I did not find the A-level subject and grade requirements in public text. Check McMaster's international requirements by country.",O]],
+ money:[["Engineering International Scholar Award: one-time $10,000 CAD, apply by 19 Feb 2027 (no offer needed to apply)",O]]},
+{id:"ubc",name:"University of British Columbia",city:"Vancouver, BC",url:"https://you.ubc.ca",apply:"https://you.ubc.ca/apply/",dl:["2027-01-15",U],
+ p:[["Mechanical Engineering","mech"],["Electrical Engineering","elec"],["Computer Engineering","elec"],["Engineering Physics","phys"],["Computer Science","cs"]],
+ how:[["Apply through EducationPlannerBC",O],["Computer Science also has its own supplemental application on the same deadline",U]],
+ dates:[["2027-01-15","Application deadline for September 2027. Confirm it on UBC's site.",U],["2026-10-05","International Scholars Program opens; its deadline is earlier, around November. Confirm.",U]],
+ reqs:[["Applied Science (Engineering) expects strong A levels including Maths, Physics and Chemistry",U],["Check the British section of UBC's admission requirements for exact grades",O]],
+ money:[["International Scholars Program: a separate application with an earlier deadline",U],["International Major Entrance Scholarship is automatic for eligible applicants. Check that it covers your situation.",U]]}];
+const SOURCES=[["Yconic","https://yconic.com"],["Scholarships Canada","https://www.scholarshipscanada.com"],["Schulich Leader Scholarships","https://www.schulichleaders.com"]];
+const SDB=[
+{id:"cwelcome",name:"President's Welcome Award for International Students",uni:"Carleton",note:"Automatic, about $2,000 to $5,000 CAD depending on grades.",url:"https://admissions.carleton.ca",deadline:""},
+{id:"cprestige",name:"Prestige Scholarship",uni:"Carleton",note:"Separate application.",url:"https://carleton.ca/awards/entrance-scholarships",deadline:"2027-03-01"},
+{id:"uengint",name:"Engineering International Scholar Award",uni:"University of Toronto",note:"Fill in the Financial Information section of the Engineering portal.",url:"https://discover.engineering.utoronto.ca",deadline:"2027-01-15"},
+{id:"pearson",name:"Lester B. Pearson International Scholarship",uni:"University of Toronto",note:"Nominated by your school. Check if private candidates can be nominated.",url:"https://future.utoronto.ca",deadline:""},
+{id:"wint",name:"International Student Entrance Scholarship",uni:"University of Waterloo",note:"About $10,000 CAD, automatic. Unconfirmed: verify on Waterloo's site.",url:"https://uwaterloo.ca/future-students",deadline:""},
+{id:"aawards",name:"Competitive entrance awards",uni:"University of Alberta",note:"Separate awards application.",url:"https://www.ualberta.ca/en/admissions",deadline:"2027-01-10"},
+{id:"tmuent",name:"President's Entrance Scholarship and International Student Leadership Award",uni:"Toronto Metropolitan University",note:"Separate application.",url:"https://www.torontomu.ca/admissions/undergraduate/fees-funding/scholarships-awards/terms-conditions-2027/",deadline:"2027-02-16"},
+{id:"mmeng",name:"Engineering International Scholar Award",uni:"McMaster University",note:"One-time $10,000 CAD. No offer needed to apply.",url:"https://future.mcmaster.ca",deadline:"2027-02-19"},
+{id:"schulich",name:"Schulich Leader Scholarships",uni:"Several Canadian universities",note:"STEM award nominated through your school. Check if you can be nominated.",url:"https://www.schulichleaders.com",deadline:""}];
+const uid=()=>Math.random().toString(36).slice(2,9);
+function fresh(){const a={};UNIS.forEach(u=>a[u.id]={program:"",deadline:"",status:"Researching",notes:"",checks:{}});return{a,schol:[]}}
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
+UNIS.forEach(u=>{if(!S.a[u.id])S.a[u.id]={program:"",deadline:"",status:"Researching",notes:"",checks:{}}});
+let cat="all";const open=new Set();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $=id=>document.getElementById(id);
+const fmt=d=>new Date(d+"T00:00:00").toLocaleDateString("en-CA",{month:"short",day:"numeric",year:"numeric"});
+function daysTo(d){if(!d)return null;const t=new Date();t.setHours(0,0,0,0);return Math.round((new Date(d+"T00:00:00")-t)/864e5)}
+const tag=o=>o?"":' <span class="un">unconfirmed</span>';
+const progOf=(u,a)=>u.p.find(p=>p[0]===a.program);
+function offDl(u,a){const p=progOf(u,a);return p&&p[2]?[p[2],O]:u.dl}
+function effDl(u,a){return a.deadline||offDl(u,a)[0]}
+const prog=a=>ITEMS.filter((_,i)=>a.checks[i]).length;
+const safeUrl=u=>/^https?:\/\//i.test(u)?u:"";
+const short=n=>n.replace(/^University of /,"").replace(/ University$/,"");
+
+function render(){
+  const act=UNIS.map(u=>({u,a:S.a[u.id]})).filter(x=>["Researching","Preparing"].includes(x.a.status));
+  const live=act.map(x=>({...x,d:effDl(x.u,x.a)})).filter(x=>daysTo(x.d)>=0).sort((p,q)=>p.d.localeCompare(q.d));
+  if(live.length){const d=live[0].d,n=daysTo(d),same=live.filter(x=>x.d===d).map(x=>short(x.u.name));
+    $("hero").innerHTML=`<span>${n}</span> ${n===1?"day":"days"} to your next deadline`;
+    $("heroSub").textContent=`${same.join(", ")} ${same.length>1?"all close":"closes"} on ${fmt(d)}.`;
+  }else{$("hero").textContent="No open deadlines";$("heroSub").textContent="Everything is applied, passed or marked not going.";}
+  const done=UNIS.filter(u=>["Applied","Offer"].includes(S.a[u.id].status)).length;
+  $("stat").textContent=`${done} of ${UNIS.length} applied`;
+
+  $("chips").innerHTML=[["all","All degrees"],...Object.entries(CATS)].map(([k,v])=>`<button class="chip" type="button" data-cat="${k}" aria-pressed="${cat===k}">${v}</button>`).join("");
+
+  const list=[...UNIS].sort((x,y)=>effDl(x,S.a[x.id]).localeCompare(effDl(y,S.a[y.id])));
+  $("unis").innerHTML=list.map(u=>{
+    const a=S.a[u.id],d=effDl(u,a),n=daysTo(d),p=prog(a),pct=Math.round(p/ITEMS.length*100);
+    const match=u.p.filter(x=>cat==="all"||x[1]===cat),none=!match.length;
+    const opts=u.p.filter(x=>cat==="all"||x[1]===cat||x[0]===a.program);
+    const off=offDl(u,a),edited=!!a.deadline;
+    const dTxt=n<0?"Passed":n,dSub=n<0?"deadline":(n===1?"day left":"days left");
+    return `<div class="row ${open.has(u.id)?"open":""} ${none?"dim":""}" data-id="${u.id}">
+ <button class="head" type="button" data-t="${u.id}" aria-expanded="${open.has(u.id)}">
+  <span><span class="nm">${esc(u.name)}</span><br><span class="pg">${esc(u.city)} · ${a.program?esc(a.program):none?"No "+CATS[cat].toLowerCase()+" program listed":"No program chosen yet"} · ${esc(a.status)}</span></span>
+  <span class="days ${n>=0&&n<=30?"soon":""}">${dTxt}<small>${dSub}</small></span>
+  <span class="bar"><i class="${pct===100?"full":""}" style="width:${pct}%"></i></span>
+ </button>
+ <div class="body">
+  <div class="grid">
+   <label class="f">Program<select data-f="program"><option value="">Choose a program</option>${opts.map(x=>`<option ${x[0]===a.program?"selected":""}>${esc(x[0])}</option>`).join("")}</select></label>
+   <label class="f">Deadline<input type="date" data-f="deadline" value="${esc(d)}"></label>
+   <label class="f">Status<select data-f="status">${STATUS.map(s=>`<option ${s===a.status?"selected":""}>${s}</option>`).join("")}</select></label>
+  </div>
+  <div class="tag" style="margin:-6px 0 14px">${edited?`You changed this date. <a href="#" data-reset="${u.id}">Reset to ${fmt(off[0])}</a>`:`Prefilled from the university's published date${off[1]?"":" (unconfirmed)"}. Edit it if yours differs.`}</div>
+  <div class="info">
+   <div><h4>How to apply</h4><ul>${u.how.map(x=>`<li>${esc(x[0])}${tag(x[1])}</li>`).join("")}</ul></div>
+   <div><h4>Key dates</h4><ul>${u.dates.map(x=>`<li><b>${fmt(x[0])}</b>: ${esc(x[1])}${tag(x[2])}</li>`).join("")}</ul></div>
+   <div><h4>Grades and requirements</h4><ul>${u.reqs.map(x=>`<li>${esc(x[0])}${tag(x[1])}</li>`).join("")}</ul></div>
+   <div><h4>Scholarships and money</h4><ul>${u.money.map(x=>`<li>${esc(x[0])}${tag(x[1])}</li>`).join("")}</ul></div>
+  </div>
+  <div class="checks">${ITEMS.map((t,i)=>`<label><input type="checkbox" data-c="${i}" ${a.checks[i]?"checked":""}>${esc(t)}</label>`).join("")}</div>
+  <label class="f">Your notes: grade targets, contacts, questions<textarea data-f="notes">${esc(a.notes)}</textarea></label>
+  <div class="acts" style="margin-top:12px"><a class="btn line" href="${u.apply}" target="_blank" rel="noopener" style="text-decoration:none">Dates and how to apply</a><a class="btn line" href="${u.url}" target="_blank" rel="noopener" style="text-decoration:none">${esc(short(u.name))} website</a></div>
+ </div></div>`}).join("");
+
+  $("src").innerHTML=SOURCES.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join("");
+  $("sdb").innerHTML=SDB.map(d=>{const has=S.schol.some(s=>s.src===d.id);
+    return `<div class="sd"><div><div class="n">${esc(d.name)}</div><div class="m">${esc(d.uni)}${d.deadline?" · deadline "+fmt(d.deadline):""}. ${esc(d.note)}</div></div><button class="btn line" type="button" data-sa="${d.id}" ${has?"disabled":""}>${has?"On my list":"Add to my list"}</button></div>`}).join("");
+
+  const sl=[...S.schol].sort((a,b)=>(a.done-b.done)||(a.deadline||"9999").localeCompare(b.deadline||"9999"));
+  $("schol").innerHTML=sl.map(s=>{const n=daysTo(s.deadline),l=safeUrl(s.url);
+   return `<div class="sch ${s.done?"done":""}"><input type="checkbox" data-sd="${s.id}" ${s.done?"checked":""} aria-label="Mark ${esc(s.name)} submitted">
+   <div><div class="t">${l?`<a href="${esc(l)}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)}</div>
+   <div class="d"><input type="date" data-sdl="${s.id}" value="${esc(s.deadline||"")}" aria-label="Deadline for ${esc(s.name)}" style="width:auto;padding:3px 6px"> ${n===null?"set a deadline":n<0?"deadline passed":n+(n===1?" day left":" days left")}</div></div>
+   <button class="btn del" type="button" data-sx="${s.id}">Remove</button></div>`}).join("")||`<div class="empty">Empty. Add one from the list above or type your own below.</div>`;
+}
+
+document.addEventListener("click",e=>{
+  const g=k=>e.target.closest("["+k+"]");let el;
+  if(el=g("data-reset")){e.preventDefault();S.a[el.dataset.reset].deadline="";save();render();return}
+  if(el=g("data-t")){const id=el.dataset.t;open.has(id)?open.delete(id):open.add(id);render();return}
+  if(el=g("data-cat")){cat=el.dataset.cat;render();return}
+  if(el=g("data-sa")){const d=SDB.find(x=>x.id===el.dataset.sa);S.schol.push({id:uid(),src:d.id,name:d.name+" ("+d.uni+")",deadline:d.deadline,url:d.url,done:false});save();render();return}
+  if(el=g("data-sx")){S.schol=S.schol.filter(s=>s.id!==el.dataset.sx);save();render()}
+});
+document.addEventListener("change",e=>{
+  const el=e.target,row=el.closest(".row");
+  if(row){const a=S.a[row.dataset.id];
+    if(el.dataset.c!==undefined)a.checks[el.dataset.c]=el.checked;
+    else if(el.dataset.f==="program"){a.program=el.value;a.deadline=""}
+    else if(el.dataset.f)a[el.dataset.f]=el.value;
+    save();render();return}
+  if(el.dataset.sd){const s=S.schol.find(x=>x.id===el.dataset.sd);if(s){s.done=el.checked;save();render()}}
+  if(el.dataset.sdl){const s=S.schol.find(x=>x.id===el.dataset.sdl);if(s){s.deadline=el.value;save();render()}}
+});
+document.addEventListener("input",e=>{const el=e.target,row=el.closest(".row");
+  if(row&&el.tagName==="TEXTAREA"){S.a[row.dataset.id].notes=el.value;save()}});
+$("sa").onclick=()=>{const n=$("sn").value.trim();if(!n){$("sn").focus();return}
+  S.schol.push({id:uid(),name:n,deadline:$("sd").value,url:$("su").value.trim(),done:false});
+  $("sn").value=$("sd").value=$("su").value="";save();render()};
+$("theme").onclick=()=>{const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dark?"light":"dark"};
+render();
+</script>
+</body>
+</html>
